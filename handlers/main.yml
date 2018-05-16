@@ -1,2 +1,9 @@
 ---
 # handlers file for golem-docker
+
+- name: restart docker
+  become: yes
+  systemd:
+    daemon_reload: yes
+    name: docker
+    state: restarted

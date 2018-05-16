@@ -1,2 +1,4 @@
 ---
 # defaults file for golem-docker
+
+golem_docker_dataroot: "/var/lib/docker"

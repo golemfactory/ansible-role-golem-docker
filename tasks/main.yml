@@ -17,9 +17,39 @@
     state: latest
     update_cache: yes
   become: yes
+  notify: restart docker
+
+- name: create dataroot
+  become: yes
+  file:
+    path: "{{ golem_docker_dataroot }}"
+    state: directory
+
+- name: create systemd config directory
+  become: yes
+  file:
+    path: "/etc/systemd/system/docker.service.d"
+    state: directory
+
+- name: override docker config
+  become: yes
+  when: golem_docker_dataroot != "/var/lib/docker"
+  template:
+    src: "override.conf.j2"
+    dest: "/etc/systemd/system/docker.service.d/override.conf"
+  notify: restart docker
+
+- name: default docker config
+  become: yes
+  when: golem_docker_dataroot == "/var/lib/docker"
+  file:
+    path: "/etc/systemd/system/docker.service.d/override.conf"
+    state: absent
+  notify: restart docker
 
 - name: start docker
   systemd:
+    daemon_reload: yes
     name: docker
     state: started
     enabled: yes
