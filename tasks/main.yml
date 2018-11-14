@@ -32,12 +32,19 @@
     state: directory
 
 - name: override docker config
-  become: yes
   when: golem_docker_dataroot != "/var/lib/docker"
-  template:
-    src: "override.conf.j2"
-    dest: "/etc/systemd/system/docker.service.d/override.conf"
-  notify: restart docker
+  block:
+    - name: get ExecStart line
+      command: grep ExecStart= /lib/systemd/system/docker.service
+      changed_when: False
+      register: golem_docker_exec_start
+
+    - name: override docker config
+      become: yes
+      template:
+        src: "override.conf.j2"
+        dest: "/etc/systemd/system/docker.service.d/override.conf"
+      notify: restart docker
 
 - name: default docker config
   become: yes

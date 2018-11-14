@@ -1,3 +1,3 @@
 [Service]
 ExecStart=
-ExecStart=/usr/bin/dockerd -H fd:// --data-root {{ golem_docker_dataroot }}
+{{ golem_docker_exec_start.stdout }} --data-root {{ golem_docker_dataroot }}
